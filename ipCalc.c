@@ -41,23 +41,6 @@ void helpPannel() {
   exit(EXIT_FAILURE);
 }
 
-// Calculates the mask
-void calcMask() {
-
-  int a=0;
-  for (int e=0; e < 4; e++) {
-
-    for (int i=0; i < 8; i++) {
-
-      maskBin[e][i] = a < cidrInt ? '1' : '0';
-      a++;
-
-    }
-
-  }
-
-}
-
 // Convert octets to binary
 char *convertToBin(int num) {
 
@@ -79,17 +62,68 @@ char *convertToBin(int num) {
 }
 
 // Convert octets to decimal
-char *convertToDec()
+int convertToDec(const char octet[9]){
+
+  int bit;
+  int pos;
+  int out;
+  int result=0;
+
+  // I = position of octet, reading inverted
+  for (int i=7; i >= 0; i--) {
+    out=0;
+    // This outputs the bit
+    bit = octet[i] == '1' ? 1 : 0;
+    // if i = 7 -> pos = 0
+    pos = 7-i;
+    if (pos == 0 && bit == 1) {
+      out = bit * 2;
+      for (int e=pos; e > 0; e--) {
+        out = e == pos ? bit * 2 : out * 2;
+      }
+      out--;
+    } else {
+      for (int e=pos; e > 0; e--) {
+        out = e == pos ? bit * 2 : out * 2;
+      }
+    }
+
+    result += out;
+
+  }
+  return result;
+
+}
+
+// Calculates the mask
+void calcMask() {
+
+  int a=0;
+  for (int e=0; e < 4; e++) {
+
+    for (int i=0; i < 8; i++) {
+
+      maskBin[e][i] = a < cidrInt ? '1' : '0';
+      a++;
+
+    }
+
+    maskInt[e] = convertToDec(maskBin[e]);
+
+  }
+
+}
 
 //Print results
 void printResults() {
   printf("\n[+] Printing results for %s\n\n", global_argv[1]);
   printf("Decimal\n\n");
   printf("IP ->\t%s.%s.%s.%s\n", octets[0], octets[1], octets[2], octets[3]);
+  printf("Mask ->\t%i.%i.%i.%i\n", maskInt[0], maskInt[1], maskInt[2], maskInt[3]);
   printf("CIDR ->\t%s\n", cidr);
   printf("\nBinary\n\n");
   printf("IP ->\t%s %s %s %s\n", octetsBin[0], octetsBin[1], octetsBin[2], octetsBin[3]);
-  printf("MASK ->\t%s %s %s %s\n", maskBin[0], maskBin[1], maskBin[2], maskBin[3]);
+  printf("Mask ->\t%s %s %s %s\n", maskBin[0], maskBin[1], maskBin[2], maskBin[3]);
 }
 
 // Validates user input
