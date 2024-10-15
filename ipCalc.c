@@ -124,6 +124,23 @@ void getNetwork() {
 
 }
 
+// Returns the network class
+char getClass() {
+
+  if (networkBin[0][0] == '0') {
+    return 'A';
+  } else if (networkBin[0][0] == '1' && networkBin[0][1] == '0') {
+    return 'B';
+  } else if (networkBin[0][0] == '1' && networkBin[0][1] == '1' && networkBin[0][2] == '0') {
+    return 'C';
+  } else if (networkBin[0][0] == '1' && networkBin[0][1] == '1' && networkBin[0][2] == '1' && networkBin[0][3] == '0') {
+    return 'D';
+  } else if (networkBin[0][0] == '1' && networkBin[0][1] == '1' && networkBin[0][2] == '1' && networkBin[0][3] == '1') {
+    return 'E';
+  }
+
+}
+
 // Calculates the mask
 void calcMask() {
 
@@ -145,14 +162,15 @@ void calcMask() {
 
 //Print results
 void printResults() {
-  printf("\n[+] Printing results for %s\n\n", global_argv[1]);
-  printf("Decimal\n\n");
-  printf("IP ->\t\t%s.%s.%s.%s\n", octets[0], octets[1], octets[2], octets[3]);
+  printf("\n%s[+]%s Printing results for %s%s%s\n\n", YELLOW, RESET, YELLOW, global_argv[1], RESET);
+  printf("%sDecimal%s\n\n", INFO, RESET);
+  printf("IP ->\t\t%i.%i.%i.%i\n", octetsInt[0], octetsInt[1], octetsInt[2], octetsInt[3]);
   printf("Mask ->\t\t%i.%i.%i.%i\n", maskInt[0], maskInt[1], maskInt[2], maskInt[3]);
   printf("CIDR ->\t\t%i\n", cidrInt);
+  printf("Class ->\t%c\n", getClass());
   printf("Network ->\t%i.%i.%i.%i\n", networkInt[0], networkInt[1], networkInt[2], networkInt[3]);
   printf("First IP ->\t%i.%i.%i.%i\n", firstInt[0], firstInt[1], firstInt[2], firstInt[3]);
-  printf("\nBinary\n\n");
+  printf("\n%sBinary%s\n\n", INFO, RESET);
   printf("IP ->\t\t%s %s %s %s\n", octetsBin[0], octetsBin[1], octetsBin[2], octetsBin[3]);
   printf("Mask ->\t\t%s %s %s %s\n", maskBin[0], maskBin[1], maskBin[2], maskBin[3]);
   printf("Network ->\t%s %s %s %s\n", networkBin[0], networkBin[1], networkBin[2], networkBin[3]);
@@ -237,6 +255,7 @@ int main(int argc, char *argv[]) {
     const char *input = global_argv[1];
     checkInput(input);
     calcMask();
+    getClass();
     getNetwork();
     printResults();
   } else {
