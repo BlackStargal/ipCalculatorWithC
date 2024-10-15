@@ -13,6 +13,11 @@ int cidrInt; // Stores cidr value as int
 char cidrBin[33]; // Stores cidr value in binary
 int maskInt[4]; // Stores mask as int
 char maskBin[4][9]; // Stores binary value of mask
+int networkInt[4];
+char networkBin[4][9];
+int firstInt[4];
+char firstBin[4][9];
+
 
 
 int global_argc;
@@ -62,7 +67,7 @@ char *convertToBin(int num) {
 }
 
 // Convert octets to decimal
-int convertToDec(const char octet[9]){
+int convertToDec(const char octet[9]) {
 
   int bit;
   int pos;
@@ -95,6 +100,30 @@ int convertToDec(const char octet[9]){
 
 }
 
+//Get binary and decimal network direction and first ip
+void getNetwork() {
+
+  for(int i=0; i < 4; i++) {
+    for (int e=0; e < 8; e++) {
+
+      networkBin[i][e] = octetsBin[i][e] == maskBin[i][e] && octetsBin[i][e] == '1' ? '1' : '0';
+
+    }
+
+    networkInt[i] = convertToDec(networkBin[i]);
+
+    if (i != 3) {
+      firstInt[i] = networkInt[i];
+    } else {
+      firstInt[i] = networkInt[i]+1;
+    }
+
+    strcpy(firstBin[i], convertToBin(firstInt[i]));
+
+  }
+
+}
+
 // Calculates the mask
 void calcMask() {
 
@@ -118,12 +147,16 @@ void calcMask() {
 void printResults() {
   printf("\n[+] Printing results for %s\n\n", global_argv[1]);
   printf("Decimal\n\n");
-  printf("IP ->\t%s.%s.%s.%s\n", octets[0], octets[1], octets[2], octets[3]);
-  printf("Mask ->\t%i.%i.%i.%i\n", maskInt[0], maskInt[1], maskInt[2], maskInt[3]);
-  printf("CIDR ->\t%s\n", cidr);
+  printf("IP ->\t\t%s.%s.%s.%s\n", octets[0], octets[1], octets[2], octets[3]);
+  printf("Mask ->\t\t%i.%i.%i.%i\n", maskInt[0], maskInt[1], maskInt[2], maskInt[3]);
+  printf("CIDR ->\t\t%i\n", cidrInt);
+  printf("Network ->\t%i.%i.%i.%i\n", networkInt[0], networkInt[1], networkInt[2], networkInt[3]);
+  printf("First IP ->\t%i.%i.%i.%i\n", firstInt[0], firstInt[1], firstInt[2], firstInt[3]);
   printf("\nBinary\n\n");
-  printf("IP ->\t%s %s %s %s\n", octetsBin[0], octetsBin[1], octetsBin[2], octetsBin[3]);
-  printf("Mask ->\t%s %s %s %s\n", maskBin[0], maskBin[1], maskBin[2], maskBin[3]);
+  printf("IP ->\t\t%s %s %s %s\n", octetsBin[0], octetsBin[1], octetsBin[2], octetsBin[3]);
+  printf("Mask ->\t\t%s %s %s %s\n", maskBin[0], maskBin[1], maskBin[2], maskBin[3]);
+  printf("Network ->\t%s %s %s %s\n", networkBin[0], networkBin[1], networkBin[2], networkBin[3]);
+  printf("First IP ->\t%s %s %s %s\n", firstBin[0], firstBin[1], firstBin[2], firstBin[3]);
 }
 
 // Validates user input
@@ -204,6 +237,7 @@ int main(int argc, char *argv[]) {
     const char *input = global_argv[1];
     checkInput(input);
     calcMask();
+    getNetwork();
     printResults();
   } else {
     helpPannel();
