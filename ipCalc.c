@@ -17,6 +17,10 @@ int networkInt[4];
 char networkBin[4][9];
 int firstInt[4];
 char firstBin[4][9];
+int broadcastInt[4];
+char broadcastBin[4][9];
+int lastInt[4];
+char lastBin[4][9];
 
 
 
@@ -124,6 +128,42 @@ void getNetwork() {
 
 }
 
+//Get binary and decimal network direction and first ip
+void getBroadcast() {
+
+  for(int i=0; i < 4; i++) {
+    for (int e=0; e < 8; e++) {
+
+      if (octetsBin[i][e] == '1' && maskBin[i][e] == '1') {
+
+        broadcastBin[i][e] = '1';
+
+      } else if (maskBin[i][e] == '0') {
+
+        broadcastBin[i][e] = '1';
+
+      } else if (octetsBin[i][e] == '0' && maskBin[i][e] == '1') {
+
+        broadcastBin[i][e] = '0';
+
+      }
+
+    }
+
+    broadcastInt[i] = convertToDec(broadcastBin[i]);
+
+    if (i != 3) {
+      lastInt[i] = broadcastInt[i];
+    } else {
+      lastInt[i] = broadcastInt[i]-1;
+    }
+
+    strcpy(lastBin[i], convertToBin(lastInt[i]));
+
+  }
+
+}
+
 // Returns the network class
 char getClass() {
 
@@ -169,12 +209,16 @@ void printResults() {
   printf("CIDR ->\t\t%i\n", cidrInt);
   printf("Class ->\t%c\n", getClass());
   printf("Network ->\t%i.%i.%i.%i\n", networkInt[0], networkInt[1], networkInt[2], networkInt[3]);
+  printf("Broadcast ->\t%i.%i.%i.%i\n", broadcastInt[0], broadcastInt[1], broadcastInt[2], broadcastInt[3]);
   printf("First IP ->\t%i.%i.%i.%i\n", firstInt[0], firstInt[1], firstInt[2], firstInt[3]);
+  printf("Last IP ->\t%i.%i.%i.%i\n", lastInt[0], lastInt[1], lastInt[2], lastInt[3]);
   printf("\n%sBinary%s\n\n", INFO, RESET);
   printf("IP ->\t\t%s %s %s %s\n", octetsBin[0], octetsBin[1], octetsBin[2], octetsBin[3]);
   printf("Mask ->\t\t%s %s %s %s\n", maskBin[0], maskBin[1], maskBin[2], maskBin[3]);
   printf("Network ->\t%s %s %s %s\n", networkBin[0], networkBin[1], networkBin[2], networkBin[3]);
+  printf("Broadcast ->\t%s %s %s %s\n", broadcastBin[0], broadcastBin[1], broadcastBin[2], broadcastBin[3]);
   printf("First IP ->\t%s %s %s %s\n", firstBin[0], firstBin[1], firstBin[2], firstBin[3]);
+  printf("Last IP ->\t%s %s %s %s\n", lastBin[0], lastBin[1], lastBin[2], lastBin[3]);
 }
 
 // Validates user input
@@ -257,6 +301,7 @@ int main(int argc, char *argv[]) {
     calcMask();
     getClass();
     getNetwork();
+    getBroadcast();
     printResults();
   } else {
     helpPannel();
