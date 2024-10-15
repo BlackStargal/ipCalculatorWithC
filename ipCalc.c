@@ -13,14 +13,14 @@ int cidrInt; // Stores cidr value as int
 char cidrBin[33]; // Stores cidr value in binary
 int maskInt[4]; // Stores mask as int
 char maskBin[4][9]; // Stores binary value of mask
-int networkInt[4];
-char networkBin[4][9];
-int firstInt[4];
-char firstBin[4][9];
-int broadcastInt[4];
-char broadcastBin[4][9];
-int lastInt[4];
-char lastBin[4][9];
+int networkInt[4]; // Stores network as int
+char networkBin[4][9]; // Stores binary value of network
+int firstInt[4]; // Stores first ip as int
+char firstBin[4][9]; // Stores binary value of first ip
+int broadcastInt[4]; // Stores broadcast as int
+char broadcastBin[4][9]; // Stores binary value of broadcast
+int lastInt[4]; // Stores last ip as int
+char lastBin[4][9]; // Stores binary value of last ip
 
 
 
@@ -181,6 +181,29 @@ char getClass() {
 
 }
 
+// Returns number of hosts
+int getHosts() {
+
+  int restCidr = 32 - cidrInt;
+  int hosts = 0; // hosts = 2^cidr
+  int out = 2;
+
+  if (cidrInt != 32) {
+
+    for (int i=1; i < restCidr; i++) {
+      out = out * 2;
+    }
+
+  } else if (cidrInt == 32) {
+
+    out = 1;
+
+  }
+
+  return out;
+
+}
+
 // Calculates the mask
 void calcMask() {
 
@@ -208,6 +231,8 @@ void printResults() {
   printf("Mask ->\t\t%i.%i.%i.%i\n", maskInt[0], maskInt[1], maskInt[2], maskInt[3]);
   printf("CIDR ->\t\t%i\n", cidrInt);
   printf("Class ->\t%c\n", getClass());
+  printf("Hosts ->\t%i\n", getHosts());
+  printf("Usable hosts ->\t%i\n", getHosts()-2);
   printf("Network ->\t%i.%i.%i.%i\n", networkInt[0], networkInt[1], networkInt[2], networkInt[3]);
   printf("Broadcast ->\t%i.%i.%i.%i\n", broadcastInt[0], broadcastInt[1], broadcastInt[2], broadcastInt[3]);
   printf("First IP ->\t%i.%i.%i.%i\n", firstInt[0], firstInt[1], firstInt[2], firstInt[3]);
